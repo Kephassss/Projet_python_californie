@@ -7,5 +7,5 @@ if __name__ == '__main__':
     nettoyage_csv(data) #lancement du programme de nettoyage présent dans un dossier annexe
     #determiner_l_index_des_data_manquantes(data)
     # affichage_pair_plot_en_fonction_de_la_date
-    determiner_val_abberante(data)
+    val_aberrante=determiner_val_abberante(data)
     # affichage_de_chaque_donnees_en_fonction_de_la_date(data)
