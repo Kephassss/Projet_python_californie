@@ -8,7 +8,7 @@ colonnes_defaut = [
     'TEMP_RANGE', 'WIND_TEMP_RATIO', 'LAGGED_PRECIPITATION', 'LAGGED_AVG_WIND_SPEED'
 ]
 
-def recuperer_moyenne_data_par_an(data, type_data):
+def recuperer_moyenned_un_type_au_choix_data_par_an(data, type_data):
 
     if 'DAY_OF_YEAR' not in data.columns:
         data = data.copy()
