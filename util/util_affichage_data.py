@@ -56,6 +56,34 @@ def affichage_data(data: pd.DataFrame) -> None:
     plt.ylabel(type_data)
     plt.title(f"Evolution de {type_data} en fonction du jour de l'annee")
     plt.show()
+    
+    
+def heatmap_temp_moy_en_fonction_jour_et_an(data: pd.DataFrame):
+    # Vérifie l'existence de la colonne de température moyenne
+    if "AVG_TEMP" not in data.columns:
+        data["AVG_TEMP"] = (data["MAX_TEMP"] + data["MIN_TEMP"]) / 2
+    else:
+        raise ValueError("Aucune colonne AVG_TEMP")
+
+    # Pivot: Années en lignes, Mois en colonnes
+    heatmap_data = data.pivot_table(index="YEAR",columns="MONTH",values="AVG_TEMP")
+
+    # Affichage heatmap
+    plt.figure(figsize=(14, 8))
+    sns.heatmap(heatmap_data,cmap="coolwarm",  linewidths=.5,linecolor='gray',annot=False)
+    plt.title("Températures moyennes par mois et par année", fontsize=14)
+    plt.xlabel("Mois")
+    plt.ylabel("Année")
+    plt.show()
+    
+    
+def valeurs_aberantes(data) :
+    fig,ax=plt.subplots(1,1)
+    plt.subplot(1,1,1)
+    sns.boxplot(data['MIN_TEMP']) 
+    plt.show()
+
+
 
 # def affichage_histoplot(data: pd.DataFrame) -> None: on peut pas histoplot plusieurs valeurs ?
 #     # Colonnes disponibles = type dispo ( temp max, wind, humidite etc)
@@ -83,6 +111,16 @@ def affichage_data(data: pd.DataFrame) -> None:
 #     plt.xlabel('DAY_OF_YEAR')
 #     plt.title(f"Evolution de {list_type_histo} en fonction du jour de l'annee")
 #     plt.show()
+
+
+
+
+
+
+
+
+
+
 
 
 def afficher_jour_depart_incendie(data: pd.DataFrame) -> None:
