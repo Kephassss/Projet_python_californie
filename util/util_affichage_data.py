@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import plotly.express as px
+import plotly.io as io
+io.renderers.default='browser'
 
 from util.util_recuperation_data import (
     determiner_l_index_des_data_manquantes,
@@ -70,7 +73,7 @@ def heatmap_temp_moy_en_fonction_jour_et_an(data: pd.DataFrame):
 
     # Affichage heatmap
     plt.figure(figsize=(14, 8))
-    sns.heatmap(heatmap_data,cmap="coolwarm",  linewidths=.5,linecolor='gray',annot=False)
+    sns.heatmap(heatmap_data,annot=True)
     plt.title("Températures moyennes par mois et par année", fontsize=14)
     plt.xlabel("Mois")
     plt.ylabel("Année")
@@ -78,11 +81,11 @@ def heatmap_temp_moy_en_fonction_jour_et_an(data: pd.DataFrame):
     
     
 def valeurs_aberantes(data) :
-    fig,ax=plt.subplots(1,1)
-    plt.subplot(1,1,1)
-    sns.boxplot(data['MIN_TEMP']) 
-    plt.show()
-
+    for col in data.columns : 
+        fig = px.box(data,y=col)
+        fig.show()
+        print(col,'maximale et minimale : ',data[col].max(), ', ',data[col].min())
+        
 
 
 # def affichage_histoplot(data: pd.DataFrame) -> None: on peut pas histoplot plusieurs valeurs ?

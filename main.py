@@ -5,7 +5,7 @@ from util.util_affichage_data import  valeurs_aberantes,heatmap_temp_moy_en_fonc
 
 
 if __name__ == '__main__':
-    data = pd.read_csv("U:/2ème_année/python04/CA_Weather_Fire_Dataset_1984-2025.csv")  # charge le csv
+    data = pd.read_csv("U:/2ème_année/python1311/Projet_python_californie/CA_Weather_Fire_Dataset_1984-2025.csv")  # charge le csv
     print(data.info, "\n\n")  # affiche les infos du csv
     #nettoyage_csv(data) #lancement du programme de nettoyage présent dans un dossier annexe
     
@@ -15,7 +15,7 @@ if __name__ == '__main__':
     
     #affichage_data(data)
     
-    #heatmap_temp_moy_en_fonction_jour_et_an(data)
+    heatmap_temp_moy_en_fonction_jour_et_an(data)
     
     #affichage_de_chaque_donnees_en_fonction_de_la_date(data)
     
