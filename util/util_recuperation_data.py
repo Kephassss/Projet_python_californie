@@ -9,15 +9,12 @@ colonnes_defaut = [
 ]
 
 def recuperer_moyenned_un_type_au_choix_data_par_an(data, type_data):
-
-    if 'DAY_OF_YEAR' not in data.columns:
-        data = data.copy()
-        data['DATE'] = pd.to_datetime(data['DATE'])
-        data['DAY_OF_YEAR'] = data['DATE'].dt.dayofyear
-        if type_data in colonnes_defaut:
-            moy, colonnes =moyenne_par_data(data=data,
-                                 colonnes=type_data )
+    df = assurer_colonnes_temporelles(data, besoin=("DATE", "DAY_OF_YEAR"))
+    if type_data in colonnes_defaut:
+        moy, colonnes = moyenne_par_data(data=df, colonnes=type_data)
         return moy
+    # Si type non supporté, retourner None pour conserver le comportement actuel implicite
+    return None
 
 
 
@@ -35,11 +32,8 @@ def determiner_val_abberante(data: pd.DataFrame, colonnes=None) -> pd.DataFrame:
     - Affiche un petit résumé par année
     """
 
-    #juste pour s'assurer que 'DAY_OF_YEAR' est disponible
-    if 'DAY_OF_YEAR' not in data.columns:
-        data = data.copy()
-        data['DATE'] = pd.to_datetime(data['DATE'])
-        data['DAY_OF_YEAR'] = data['DATE'].dt.dayofyear
+    # S'assurer que 'DAY_OF_YEAR' est disponible
+    data = assurer_colonnes_temporelles(data, besoin=("DAY_OF_YEAR",))
 
     #fonction en dessous pour recuperer la moyenne de la colonne en question par data
     moy, colonnes = moyenne_par_data(data)
@@ -74,8 +68,55 @@ def moyenne_par_data(data, colonnes=None) -> pd.DataFrame:
     if not colonnes:
         print("Aucune colonne à analyser trouvée.")
         return data
-    #Moyenne par jour de l'année sur tout l'historique
+    # S'assure que DAY_OF_YEAR est disponible pour le groupby
+    data = assurer_colonnes_temporelles(data, besoin=("DAY_OF_YEAR",))
+    # Moyenne par jour de l'année sur tout l'historique
     moy = data.groupby('DAY_OF_YEAR')[colonnes].mean().reset_index()
     moy = moy.rename(columns={c: f"{c}_mean" for c in colonnes})
     return moy, colonnes
+
+
+def assurer_colonnes_temporelles(
+    data: pd.DataFrame,
+    besoin=("YEAR", "MONTH", "DAY_OF_YEAR"),
+    copy: bool = True,
+) -> pd.DataFrame:
+    """
+    Garantit la présence et le bon typage des colonnes temporelles courantes.
+
+    - Si "DATE" existe, elle est convertie en datetime si nécessaire.
+    - Ajoute "YEAR" / "MONTH" / "DAY_OF_YEAR" si demandées et déductibles depuis DATE.
+
+    Paramètres:
+      - data: DataFrame source (non modifié si copy=True)
+      - besoin: itérable des colonnes temporelles à garantir
+                (par ex. ("YEAR", "DAY_OF_YEAR"))
+      - copy: renvoyer une copie (True) ou modifier en place (False)
+
+    Retour:
+      - DataFrame contenant les colonnes temporelles demandées lorsque possible.
+    """
+    df = data.copy() if copy else data
+
+    # Normaliser l'entrée besoin en set de chaînes
+    besoin_set = set(map(str, besoin))
+
+    # Convertir DATE en datetime si présente
+    if 'DATE' in df.columns:
+        if not pd.api.types.is_datetime64_any_dtype(df['DATE']):
+            df['DATE'] = pd.to_datetime(df['DATE'], errors='coerce')
+
+    # YEAR
+    if 'YEAR' in besoin_set and 'YEAR' not in df.columns and 'DATE' in df.columns:
+        df['YEAR'] = df['DATE'].dt.year
+
+    # MONTH
+    if 'MONTH' in besoin_set and 'MONTH' not in df.columns and 'DATE' in df.columns:
+        df['MONTH'] = df['DATE'].dt.month
+
+    # DAY_OF_YEAR
+    if 'DAY_OF_YEAR' in besoin_set and 'DAY_OF_YEAR' not in df.columns and 'DATE' in df.columns:
+        df['DAY_OF_YEAR'] = df['DATE'].dt.dayofyear
+
+    return df
 
