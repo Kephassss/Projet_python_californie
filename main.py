@@ -23,7 +23,7 @@ from util.util_affichage_data import (
 )
 
 
-LAUNCH_DASH = True  # Mettre False si vous ne voulez pas lancer le dashboard depuis main
+LAUNCH_DASH = False  # True ou False
 
 
 if __name__ == '__main__':

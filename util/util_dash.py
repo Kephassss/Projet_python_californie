@@ -333,7 +333,7 @@ def render_tab_content(active_tab, start, end, season, vars_selected, unit):
     return html.Div("Onglet en construction.")
 
 def run(debug: bool = True, host: str = "127.0.0.1", port: int = 8050):
-    app.run_server(debug=debug, host=host, port=port)
+    app.run(debug=debug, host=host, port=port)
 
 if __name__ == "__main__":
     run(debug=True)

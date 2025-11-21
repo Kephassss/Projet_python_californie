@@ -6,11 +6,18 @@ import numpy as np
 from matplotlib.colors import PowerNorm
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 (nécessaire pour activer le 3D)
 
-from util.util_recuperation_data import (
-    determiner_l_index_des_data_manquantes,
-    colonnes_defaut,
-    assurer_colonnes_temporelles,
-)
+try:
+    from util.util_recuperation_data import (
+        determiner_l_index_des_data_manquantes,
+        colonnes_defaut,
+        assurer_colonnes_temporelles,
+    )
+except ModuleNotFoundError:
+    from util_recuperation_data import (
+        determiner_l_index_des_data_manquantes,
+        colonnes_defaut,
+        assurer_colonnes_temporelles,
+    )
 
 c = [
     'PRECIPITATION', 'MAX_TEMP', 'MIN_TEMP', 'AVG_WIND_SPEED',
