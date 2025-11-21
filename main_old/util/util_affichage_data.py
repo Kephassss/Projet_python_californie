@@ -354,46 +354,23 @@ def heatmap_taux_incendie_wind_temp(
     plt.show()
 
 
-def visualiser_lien_lagged_data_incendies(data: pd.DataFrame) -> None:
-    """
-    Visualise le lien entre les données décalées (lagged) et les départs d'incendies.
-    """
-    cols_lagged = ['LAGGED_PRECIPITATION', 'LAGGED_AVG_WIND_SPEED']
-    target = 'FIRE_START_DAY'
-    
-    # Check columns
-    missing = [c for c in cols_lagged + [target] if c not in data.columns]
-    if missing:
-        print(f"Colonnes manquantes pour l'analyse lagged: {missing}")
-        return
 
-    df = data.copy()
-    
-    # Correlation
-    corr = df[[target] + cols_lagged].corr()
-    print("Corrélation avec les départs d'incendies :")
-    print(corr[[target]])
-    
-    # Visualization 1: Heatmap correlation
-    plt.figure(figsize=(6, 5))
-    sns.heatmap(corr, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
-    plt.title("Corrélation : Lagged Weather vs Fire Start")
-    plt.tight_layout()
+def heatmap_temp_moy_en_fonction_jour_et_an(data: pd.DataFrame):
+    # Vérifie l'existence de la colonne de température moyenne
+    if "AVG_TEMP" not in data.columns:
+        data["AVG_TEMP"] = (data["MAX_TEMP"] + data["MIN_TEMP"]) / 2
+    else:
+        raise ValueError("Aucune colonne AVG_TEMP")
+
+    # Pivot: Années en lignes, Mois en colonnes
+    heatmap_data = data.pivot_table(index="YEAR",columns="MONTH",values="AVG_TEMP")
+
+    # Affichage heatmap
+    plt.figure(figsize=(14, 8))
+    sns.heatmap(heatmap_data,cmap="coolwarm",  linewidths=.5,linecolor='gray',annot=False)
+    plt.title("Températures moyennes par mois et par année", fontsize=14)
+    plt.xlabel("Mois")
+    plt.ylabel("Année")
     plt.show()
 
-    # Visualization 2: Boxplots (Fire vs No Fire)
-    # Create a binary column for visualization if FIRE_START_DAY is count
-    df['Has_Fire'] = df[target] > 0
-    
-    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
-    
-    sns.boxplot(data=df, x='Has_Fire', y='LAGGED_PRECIPITATION', ax=axes[0], showfliers=False)
-    axes[0].set_title("Lagged Precipitation vs Fire Occurrence")
-    axes[0].set_xlabel("Incendie (True/False)")
-    
-    sns.boxplot(data=df, x='Has_Fire', y='LAGGED_AVG_WIND_SPEED', ax=axes[1], showfliers=False)
-    axes[1].set_title("Lagged Wind Speed vs Fire Occurrence")
-    axes[1].set_xlabel("Incendie (True/False)")
-    
-    plt.tight_layout()
-    plt.show()
+

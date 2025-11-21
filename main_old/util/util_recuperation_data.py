@@ -138,3 +138,4 @@ def heatmap_temp_moy_en_fonction_jour_et_an(data: pd.DataFrame):
     plt.xlabel("Mois")
     plt.ylabel("Année")
     plt.show()
+

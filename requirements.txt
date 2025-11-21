@@ -1,4 +1,6 @@
 pandas
-json
 seaborn
 matplotlib
+dash
+dash-bootstrap-components
+plotly

@@ -11,3 +11,4 @@ def nettoyage_csv(data: pd.DataFrame) -> None:
 
     print(data.duplicated().sum())  # nombre de doublons
     data.drop_duplicates(inplace=True)  # supprime les doublons
+
