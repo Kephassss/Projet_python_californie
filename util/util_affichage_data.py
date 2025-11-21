@@ -1,10 +1,16 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+<<<<<<< HEAD
 import numpy as np
 
 from matplotlib.colors import PowerNorm
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 (nécessaire pour activer le 3D)
+=======
+import plotly.express as px
+import plotly.io as io
+io.renderers.default='browser'
+>>>>>>> c64621eee549a2da20ea39e28dec91bad95a0dc1
 
 from util.util_recuperation_data import (
     determiner_l_index_des_data_manquantes,
@@ -57,6 +63,34 @@ def affichage_data(data: pd.DataFrame) -> None:
     plt.ylabel(type_data)
     plt.title(f"Evolution de {type_data} en fonction du jour de l'annee")
     plt.show()
+    
+    
+def heatmap_temp_moy_en_fonction_jour_et_an(data: pd.DataFrame):
+    # Vérifie l'existence de la colonne de température moyenne
+    if "AVG_TEMP" not in data.columns:
+        data["AVG_TEMP"] = (data["MAX_TEMP"] + data["MIN_TEMP"]) / 2
+    else:
+        raise ValueError("Aucune colonne AVG_TEMP")
+
+    # Pivot: Années en lignes, Mois en colonnes
+    heatmap_data = data.pivot_table(index="YEAR",columns="MONTH",values="AVG_TEMP")
+
+    # Affichage heatmap
+    plt.figure(figsize=(14, 8))
+    sns.heatmap(heatmap_data,annot=True)
+    plt.title("Températures moyennes par mois et par année", fontsize=14)
+    plt.xlabel("Mois")
+    plt.ylabel("Année")
+    plt.show()
+    
+    
+def valeurs_aberantes(data) :
+    for col in data.columns : 
+        fig = px.box(data,y=col)
+        fig.show()
+        print(col,'maximale et minimale : ',data[col].max(), ', ',data[col].min())
+        
+
 
 # def affichage_histoplot(data: pd.DataFrame) -> None: on peut pas histoplot plusieurs valeurs ?
 #     # Colonnes disponibles = type dispo ( temp max, wind, humidite etc)
@@ -84,6 +118,16 @@ def affichage_data(data: pd.DataFrame) -> None:
 #     plt.xlabel('DAY_OF_YEAR')
 #     plt.title(f"Evolution de {list_type_histo} en fonction du jour de l'annee")
 #     plt.show()
+
+
+
+
+
+
+
+
+
+
 
 
 def afficher_jour_depart_incendie(data: pd.DataFrame) -> None:
